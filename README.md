@@ -16,9 +16,11 @@ Inter your IP server.
 
 >$ cat private.key public.pem > cert.pem
 
->$ curl  -F"url=https://$IP:8443" -F"certificate=@public.pem" -F"max_connections=40" https://api.telegram.org/bot$TOKEN/setWebhook<br>
+>$ curl  -F"url=https://$IP:8443" -F"certificate=@public.pem" -F"max_connections=40" https://api.telegram.org/bot$TOKEN/setWebhook
+
 $IP is your IP server
 
 Find and replace your TOKEN in the pure_c.c
 
 >$ gcc pure_c.c -o bot -lcrypto -lssl
+
