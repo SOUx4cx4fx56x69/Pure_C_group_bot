@@ -123,9 +123,9 @@ void SendMessage(const int chat_id, const char msg[]) {
 	  char s_chat_id[10];
 	  sprintf(s_chat_id, "%d", chat_id);
     char body[strlen(tpl) - 
-    		     (2 * 2) + 
-    		     strlen(msg) + 
-    		     strlen(s_chat_id)];
+            (2 * 2) + 
+            strlen(msg) + 
+            strlen(s_chat_id)];
     sprintf(body, tpl, chat_id, msg);
 
     // подготовка request
