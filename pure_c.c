@@ -133,10 +133,10 @@ void SendMessage(const int chat_id, const char msg[]) {
     sprintf(s_strlen_body, "%d", strlen(body));
     char request[strlen(header) - 
                 (4 * 2) +
-    		        strlen(BOT_TOKEN) + 
-    		        strlen(host) + 
-    		        strlen(s_strlen_body) + 
-    		        strlen(body)];
+                strlen(BOT_TOKEN) + 
+                strlen(host) + 
+                strlen(s_strlen_body) + 
+                strlen(body)];
     sprintf(request, header, BOT_TOKEN, host, strlen(body), body);
 
     //Подготовили наш запрос, теперь создаем подключение
