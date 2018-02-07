@@ -20,28 +20,28 @@ int InitializeSocket(int);
 void SendMessage(const int, const char[]);
 
 int main(void){
-	SSL_CTX* sslctx = InitializeSSL("cert.pem");
-	int sd = InitializeSocket(WH_PORT);
-	listen(sd, 5);
-	int client;
-	int int_main_ssl_accept;
-	SSL* ssl = SSL_new(sslctx);
+    SSL_CTX* sslctx = InitializeSSL("cert.pem");
+    int sd = InitializeSocket(WH_PORT);
+    listen(sd, 5);
+    int client;
+    int int_main_ssl_accept;
+    SSL* ssl = SSL_new(sslctx);
 
-	while (true){
-		client = accept(sd, NULL, NULL);
-		SSL_set_fd(ssl, client);
-		int int_main_ssl_accept = SSL_accept(ssl);
-		if (int_main_ssl_accept <= 0){
-			SSL_clear(ssl);
+    while (true){
+        client = accept(sd, NULL, NULL);
+        SSL_set_fd(ssl, client);
+        int int_main_ssl_accept = SSL_accept(ssl);
+        if (int_main_ssl_accept <= 0){
+            SSL_clear(ssl);
             close(client);
             continue;
-		}
-		if (fork()) {
-			SSL_clear(ssl);
+        }
+		    if (fork()) {
+			      SSL_clear(ssl);
             close(client);
             continue;
-		}
-		// start fork
+        }
+        // start fork
         // объявление доп переменных потомку
         char head[1500] = {0};
         char json[1500] = {0};
@@ -75,17 +75,15 @@ int main(void){
         int chat_id_length = strstr(strstr(json, "first_name") + 1, "first_name") - 2 - &json[0] - shift_chat_id;
         char chat_id_char[10] = {'\0'};
         memcpy(chat_id_char, &json[shift_chat_id], chat_id_length);
-
         SSL_write(ssl, response_200, (int)strlen(response_200));
-
         SSL_clear(ssl);
         SSL_free(ssl);
         close(client);
         SendMessage(atoi(chat_id_char), text);
         exit(0);
-		// end fork
-	}
-	return 0;
+    		// end fork
+    }
+    return 0;
 }
 
 SSL_CTX* InitializeSSL(char* certificate) {
@@ -94,9 +92,8 @@ SSL_CTX* InitializeSSL(char* certificate) {
     SSL_library_init();
     SSL_CTX * sslctx = SSL_CTX_new(TLSv1_2_server_method());
     if (SSL_CTX_use_certificate_file(sslctx, certificate , SSL_FILETYPE_PEM) <= 0 ||
-    	SSL_CTX_use_PrivateKey_file(sslctx,  certificate, SSL_FILETYPE_PEM) <= 0 ||
-    	!SSL_CTX_check_private_key(sslctx))
-    		exit(-2);
+        SSL_CTX_use_PrivateKey_file(sslctx,  certificate, SSL_FILETYPE_PEM) <= 0 ||
+        !SSL_CTX_check_private_key(sslctx)) exit(-2);
     return sslctx;
 }
 
@@ -119,27 +116,27 @@ void SendMessage(const int chat_id, const char msg[]) {
     int port = 443;
     // подготовка шаблонов
     char host[]     = "api.telegram.org";
-	char header[]   = "POST /bot%s/sendMessage HTTP/1.1\r\nHost: %s\r\nContent-Type: application/json\r\nContent-Length: %d\r\nConnection: close\r\n\r\n%s";
+    char header[]   = "POST /bot%s/sendMessage HTTP/1.1\r\nHost: %s\r\nContent-Type: application/json\r\nContent-Length: %d\r\nConnection: close\r\n\r\n%s";
     char tpl[]      = "{\"chat_id\":%d,\"text\":\"%s\"}";
 
     //  подготовка body
-	char s_chat_id[10];
-	sprintf(s_chat_id, "%d", chat_id);
+	  char s_chat_id[10];
+	  sprintf(s_chat_id, "%d", chat_id);
     char body[strlen(tpl) - 
-    		  (2 * 2) + 
-    		  strlen(msg) + 
-    		  strlen(s_chat_id)];
+    		      (2 * 2) + 
+    		      strlen(msg) + 
+    		      strlen(s_chat_id)];
     sprintf(body, tpl, chat_id, msg);
 
     // подготовка request
-	char s_strlen_body[10];
-	sprintf(s_strlen_body, "%d", strlen(body));
+	  char s_strlen_body[10];
+	  sprintf(s_strlen_body, "%d", strlen(body));
     char request[strlen(header) - 
-    			 (4 * 2) +
-    		     strlen(BOT_TOKEN) + 
-    		     strlen(host) + 
-    		     strlen(s_strlen_body) + 
-    		     strlen(body)];
+        			   (4 * 2) +
+    		         strlen(BOT_TOKEN) + 
+    		         strlen(host) + 
+    		         strlen(s_strlen_body) + 
+    		         strlen(body)];
     sprintf(request, header, BOT_TOKEN, host, strlen(body), body);
 
     //Подготовили наш запрос, теперь создаем подключение
