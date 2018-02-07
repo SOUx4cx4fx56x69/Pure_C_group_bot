@@ -123,20 +123,20 @@ void SendMessage(const int chat_id, const char msg[]) {
 	  char s_chat_id[10];
 	  sprintf(s_chat_id, "%d", chat_id);
     char body[strlen(tpl) - 
-    		      (2 * 2) + 
-    		      strlen(msg) + 
-    		      strlen(s_chat_id)];
+    		     (2 * 2) + 
+    		     strlen(msg) + 
+    		     strlen(s_chat_id)];
     sprintf(body, tpl, chat_id, msg);
 
     // подготовка request
-	  char s_strlen_body[10];
-	  sprintf(s_strlen_body, "%d", strlen(body));
+    char s_strlen_body[10];
+    sprintf(s_strlen_body, "%d", strlen(body));
     char request[strlen(header) - 
-        			   (4 * 2) +
-    		         strlen(BOT_TOKEN) + 
-    		         strlen(host) + 
-    		         strlen(s_strlen_body) + 
-    		         strlen(body)];
+                (4 * 2) +
+    		        strlen(BOT_TOKEN) + 
+    		        strlen(host) + 
+    		        strlen(s_strlen_body) + 
+    		        strlen(body)];
     sprintf(request, header, BOT_TOKEN, host, strlen(body), body);
 
     //Подготовили наш запрос, теперь создаем подключение
