@@ -9,7 +9,6 @@
 #include <netdb.h>
 #include <unistd.h>
 #include <stdbool.h>
-#include <time.h>
 
 // Преднастройки
 const int WH_PORT 		= 8443;
@@ -52,7 +51,6 @@ int main(void){
         // подготовка шаблонов
         char response_200[] = "HTTP/1.1 200 OK\r\nConnection: close\r\n\r\n";
 
-        // считваем все сообщение в buff по 1 байту
         i = SSL_read(ssl, head, 1500);
         if (i <= 0){
             SSL_clear(ssl);
@@ -118,8 +116,8 @@ void SendMessage(const int chat_id, const char msg[]) {
     char tpl[]      = "{\"chat_id\":%d,\"text\":\"%s\"}";
 
     //  подготовка body
-	  char s_chat_id[10];
-	  sprintf(s_chat_id, "%d", chat_id);
+    char s_chat_id[10];
+    sprintf(s_chat_id, "%d", chat_id);
     char body[strlen(tpl) - 
               (2 * 2) + 
               strlen(msg) + 
@@ -167,7 +165,7 @@ char* JSON(const char* Json, const size_t N, const size_t M){
 			m = 0,
 			n = -1;
 	static char JsonDiscret[10][10][50];
-	while (i < strlen(Json) && k < 50 && m < 10 && n < 10){
+	while (i < strlen(Json)){
 		switch (Json[i]){
 		case '{':
 			n++;
