@@ -36,8 +36,8 @@ int main(void){
             close(client);
             continue;
         }
-		    if (fork()) {
-			      SSL_clear(ssl);
+        if (fork()) {
+            SSL_clear(ssl);
             close(client);
             continue;
         }
