@@ -10,12 +10,12 @@ Ver 0.1.0
 makfloy created an unstable test version
 
 <u>For install this bot.</u>
->$ openssl req -newkey rsa:2048 -sha256 -nodes -keyout private.key -x509 -days 365 -out public.pem
+>$ openssl req -newkey rsa:2048 -sha256 -nodes -keyout private.key -x509 -days 365 -out public.pem<br>
 Inter your IP server.
 
 >$ cat private.key public.pem > cert.pem
 
->$ curl  -F"url=https://$IP:8443" -F"certificate=@public.pem" -F"max_connections=40" https://api.telegram.org/bot$TOKEN/setWebhook
+>$ curl  -F"url=https://$IP:8443" -F"certificate=@public.pem" -F"max_connections=40" https://api.telegram.org/bot$TOKEN/setWebhook<br>
 $IP is your IP server
 
 Find and replace your TOKEN in the pure_c.c
