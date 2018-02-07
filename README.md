@@ -10,7 +10,8 @@ Ver 0.1.0
 makfloy created an unstable test version
 
 <u>For install this bot.</u>
->$ openssl req -newkey rsa:2048 -sha256 -nodes -keyout private.key -x509 -days 365 -out public.pem<br>
+>$ openssl req -newkey rsa:2048 -sha256 -nodes -keyout private.key -x509 -days 365 -out public.pem
+
 Inter your IP server.
 
 >$ cat private.key public.pem > cert.pem
