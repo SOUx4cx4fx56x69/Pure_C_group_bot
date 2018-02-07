@@ -1,4 +1,4 @@
-"Pure C" group's bot
+# "Pure C" group's bot
 
 A friendly community of hacker programmers. We will be happy to help you or talk about the exciting world of code.
 
