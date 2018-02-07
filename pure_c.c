@@ -66,8 +66,9 @@ int main(void){
             exit(0);
         }
 
-        char* message = JSON(json, 1, 4) + 1;
-		message[strlen(message)-1]=0;
+        char* message = strstr(json, ",\"text\":") + 9;
+        message[strlen(message) - 3] = 0;
+        printf("%s\n", message);
 		
 		int chat_id = atoi(JSON(json, 2, 5));
 		
