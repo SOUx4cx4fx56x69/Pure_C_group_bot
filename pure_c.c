@@ -68,17 +68,14 @@ int main(void){
 
         char* message = strstr(json, ",\"text\":") + 9;
         message[strlen(message) - 3] = 0;
-        printf("%s\n", message);
-		
-		int chat_id = atoi(JSON(json, 2, 5));
-		
+        int chat_id = atoi(JSON(json, 2, 5));
         SSL_write(ssl, response_200, (int)strlen(response_200));
         SSL_clear(ssl);
         SSL_free(ssl);
         close(client);
         SendMessage(chat_id, message);
         exit(0);
-    		// end fork
+    	// end fork
     }
     return 0;
 }
@@ -161,10 +158,10 @@ void SendMessage(const int chat_id, const char msg[]) {
 }
 
 char* JSON(const char* Json, const size_t N, const size_t M){
-	size_t	i = 0,
-			k = 0,
-			m = 0,
-			n = -1;
+    size_t i = 0,
+        k = 0,
+		m = 0,
+		n = -1;
 	static char JsonDiscret[10][10][50];
 	while (i < strlen(Json)){
 		switch (Json[i]){
