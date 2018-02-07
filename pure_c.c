@@ -18,6 +18,7 @@ const char BOT_TOKEN[] 	= "";
 SSL_CTX* InitializeSSL(char*);
 int InitializeSocket(int);
 void SendMessage(const int, const char[]);
+char* JSON(const char*, const size_t, const size_t);
 
 int main(void){
     SSL_CTX* sslctx = InitializeSSL("cert.pem");
@@ -66,20 +67,17 @@ int main(void){
             close(client);
             exit(0);
         }
-        int shift_text = strstr(json, ",\"text\":\"") + 9 - &json[0];
-        int text_length = strstr(json, "\"}}") - &json[0] - shift_text;
-        char text[1500] = {'\0'};
-        memcpy(text, &json[shift_text], text_length);
 
-        int shift_chat_id = strstr(json, "chat") + 12 - &json[0];
-        int chat_id_length = strstr(strstr(json, "first_name") + 1, "first_name") - 2 - &json[0] - shift_chat_id;
-        char chat_id_char[10] = {'\0'};
-        memcpy(chat_id_char, &json[shift_chat_id], chat_id_length);
+        char* message = JSON(json, 1, 4) + 1;
+		message[strlen(message)-1]=0;
+		
+		int chat_id = atoi(JSON(json, 2, 5));
+		
         SSL_write(ssl, response_200, (int)strlen(response_200));
         SSL_clear(ssl);
         SSL_free(ssl);
         close(client);
-        SendMessage(atoi(chat_id_char), text);
+        SendMessage(chat_id, message);
         exit(0);
     		// end fork
     }
@@ -161,4 +159,40 @@ void SendMessage(const int chat_id, const char msg[]) {
     SSL_clear(cSSL);
     SSL_CTX_free(sslctx);
     close(sd);
+}
+
+char* JSON(const char* Json, const size_t N, const size_t M){
+	size_t	i = 0,
+			k = 0,
+			m = 0,
+			n = -1;
+	static char JsonDiscret[10][10][50];
+	while (i < strlen(Json)){
+		switch (Json[i]){
+		case '{':
+			n++;
+			if (n) JsonDiscret[n-1][m][k] = 0; // символ конца строки
+			m = 0;
+			while(strlen(JsonDiscret[n][m++]) > 0);
+			m--;
+			k = 0;
+			break;
+		case '}':
+			n--;
+			m = 0;
+			while(strlen(JsonDiscret[n][m++]) > 0);
+			m--;
+			k = 0;
+			break;
+		case ',':
+			JsonDiscret[n][m][k] = 0; 
+			m++;
+			k = 0;
+			break;
+		default:
+			JsonDiscret[n][m][k++] = Json[i];
+		}
+		i++;
+	}
+	return strchr(JsonDiscret[N][M], ':') + 1;
 }
