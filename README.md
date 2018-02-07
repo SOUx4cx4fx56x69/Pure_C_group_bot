@@ -9,7 +9,7 @@ Link: https://web.telegram.org/#/im?p=@Pure_C
 Ver 0.1.0         
 makfloy created an unstable test version
 
-#For install this bot.
+# For install this bot.
 
 >$ openssl req -newkey rsa:2048 -sha256 -nodes -keyout private.key -x509 -days 365 -out public.pem
 
