@@ -11,8 +11,8 @@
 #include <stdbool.h>
 
 // Преднастройки
-const int WH_PORT 		= 8443;
-const char BOT_TOKEN[] 	= "";
+const int WH_PORT       = 8443;
+const char BOT_TOKEN[]  = "";
 
 SSL_CTX* InitializeSSL(char*);
 int InitializeSocket(int);
