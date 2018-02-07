@@ -167,7 +167,7 @@ char* JSON(const char* Json, const size_t N, const size_t M){
 			m = 0,
 			n = -1;
 	static char JsonDiscret[10][10][50];
-	while (i < strlen(Json)){
+	while (i < strlen(Json) && k < 50 && m < 10 && n < 10){
 		switch (Json[i]){
 		case '{':
 			n++;
