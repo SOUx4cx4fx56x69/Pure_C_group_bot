@@ -9,15 +9,15 @@ Link: https://web.telegram.org/#/im?p=@Pure_C
 Ver 0.1.0         
 makfloy created an unstable test version
 
-For install this bot.<br>
-<i>$ openssl req -newkey rsa:2048 -sha256 -nodes -keyout private.key -x509 -days 365 -out public.pem </i><br>
+<u>For install this bot.</u><br>
+`$ openssl req -newkey rsa:2048 -sha256 -nodes -keyout private.key -x509 -days 365 -out public.pem`<br>
 Inter your IP server.
 
-<i>$ cat private.key public.pem > cert.pem</i>
+`$ cat private.key public.pem > cert.pem`
 
-<i>$ curl  -F"url=https://$IP:8443" -F"certificate=@public.pem" -F"max_connections=40" https://api.telegram.org/bot$TOKEN/setWebhook </i><br>
+`$ curl  -F"url=https://$IP:8443" -F"certificate=@public.pem" -F"max_connections=40" https://api.telegram.org/bot$TOKEN/setWebhook`<br>
 $IP is your IP server
 
 Find and replace your TOKEN in the pure_c.c
 
-<i>$ gcc pure_c.c -o bot -lcrypto -lssl</i>
+`$ gcc pure_c.c -o bot -lcrypto -lssl`
