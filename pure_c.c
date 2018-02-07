@@ -159,9 +159,9 @@ void SendMessage(const int chat_id, const char msg[]) {
 
 char* JSON(const char* Json, const size_t N, const size_t M){
     size_t i = 0,
-        k = 0,
-		m = 0,
-		n = -1;
+           k = 0,
+           m = 0,
+           n = -1;
 	static char JsonDiscret[10][10][50];
 	while (i < strlen(Json)){
 		switch (Json[i]){
