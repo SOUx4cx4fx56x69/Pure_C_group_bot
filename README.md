@@ -22,7 +22,8 @@ Inter your IP server.
 $IP is your IP server
 
 Find and replace your TOKEN in the pure_c.c
-```const char BOT_TOKEN[]   = "";```
+
+>const char BOT_TOKEN[]   = "";
 
 >$ gcc pure_c.c -o bot -lcrypto -lssl
 
