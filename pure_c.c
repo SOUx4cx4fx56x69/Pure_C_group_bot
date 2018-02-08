@@ -80,12 +80,10 @@ int main(void){
 		if (chat_id == NULL) exit(0);
 		chat_id += 16;
 		i = 0; while(chat_id[i] != ',') i++; chat_id[i] = 0;
-
 		message[4] = 0;
 		if (!strcmp(message, "@bot"))
 			SendMessage(chat_id, message+5);
-		
-        exit(0);
+		exit(0);
     	// end fork
     }
     return 0;
