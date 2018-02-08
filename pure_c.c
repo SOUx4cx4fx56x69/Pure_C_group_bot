@@ -64,8 +64,8 @@ int main(void){
             close(client);
             exit(0);
         }
-		SSL_write(ssl, response_200, (int)strlen(response_200));
-		SSL_clear(ssl);
+        SSL_write(ssl, response_200, (int)strlen(response_200));
+        SSL_clear(ssl);
         SSL_free(ssl);
         close(client);
 
