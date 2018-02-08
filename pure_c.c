@@ -80,7 +80,7 @@ int main(void){
         i = 0; while(chat_id[i] != ',') i++; chat_id[i] = 0;
         message[4] = 0;
         if (!strcmp(message, "@bot"))
-			SendMessage(chat_id, message+5);
+            SendMessage(chat_id, message+5);
         exit(0);
     	// end fork
     }
