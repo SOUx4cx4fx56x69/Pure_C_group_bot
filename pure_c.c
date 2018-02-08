@@ -16,8 +16,7 @@ const char BOT_TOKEN[]  = "";
 
 SSL_CTX* InitializeSSL(char*);
 int InitializeSocket(int);
-void SendMessage(const int, const char[]);
-char* JSON(const char*, const size_t, const size_t);
+void SendMessage(const char[], const char[]);
 
 int main(void){
     SSL_CTX* sslctx = InitializeSSL("cert.pem");
@@ -65,15 +64,27 @@ int main(void){
             close(client);
             exit(0);
         }
-
-        char* message = strstr(json, ",\"text\":") + 9;
-        message[strlen(message) - 3] = 0;
-        int chat_id = atoi(JSON(json, 2, 5));
-        SSL_write(ssl, response_200, (int)strlen(response_200));
-        SSL_clear(ssl);
+		SSL_write(ssl, response_200, (int)strlen(response_200));
+		SSL_clear(ssl);
         SSL_free(ssl);
         close(client);
-        SendMessage(chat_id, message);
+		
+		printf("%s\n", json);
+		
+        char* message = strstr(json, ",\"text\":");
+		if (message == NULL) exit(0);
+		message += 9;
+        message[strlen(message) - 3] = 0;
+		
+        char* chat_id = strstr(json, "\"},\"chat\":{\"id\":");
+		if (chat_id == NULL) exit(0);
+		chat_id += 16;
+		i = 0; while(chat_id[i] != ',') i++; chat_id[i] = 0;
+
+		message[4] = 0;
+		if (!strcmp(message, "@bot"))
+			SendMessage(chat_id, message+5);
+		
         exit(0);
     	// end fork
     }
@@ -105,21 +116,19 @@ int InitializeSocket(int port) {
     return sd;
 }
 
-void SendMessage(const int chat_id, const char msg[]) {
+void SendMessage(const char chat_id[], const char msg[]) {
     // локальные переменные
     int port = 443;
     // подготовка шаблонов
     char host[]     = "api.telegram.org";
     char header[]   = "POST /bot%s/sendMessage HTTP/1.1\r\nHost: %s\r\nContent-Type: application/json\r\nContent-Length: %d\r\nConnection: close\r\n\r\n%s";
-    char tpl[]      = "{\"chat_id\":%d,\"text\":\"%s\"}";
+    char tpl[]      = "{\"chat_id\":%s,\"text\":\"%s\"}";
 
     //  подготовка body
-    char s_chat_id[10];
-    sprintf(s_chat_id, "%d", chat_id);
     char body[strlen(tpl) - 
               (2 * 2) + 
               strlen(msg) + 
-              strlen(s_chat_id)];
+              strlen(chat_id)];
     sprintf(body, tpl, chat_id, msg);
 
     // подготовка request
@@ -155,40 +164,4 @@ void SendMessage(const int chat_id, const char msg[]) {
     SSL_clear(cSSL);
     SSL_CTX_free(sslctx);
     close(sd);
-}
-
-char* JSON(const char* Json, const size_t N, const size_t M){
-    size_t i = 0,
-           k = 0,
-           m = 0,
-           n = -1;
-	static char JsonDiscret[10][10][50];
-	while (i < strlen(Json)){
-		switch (Json[i]){
-		case '{':
-			n++;
-			if (n) JsonDiscret[n-1][m][k] = 0; // символ конца строки
-			m = 0;
-			while(strlen(JsonDiscret[n][m++]) > 0);
-			m--;
-			k = 0;
-			break;
-		case '}':
-			n--;
-			m = 0;
-			while(strlen(JsonDiscret[n][m++]) > 0);
-			m--;
-			k = 0;
-			break;
-		case ',':
-			JsonDiscret[n][m][k] = 0; 
-			m++;
-			k = 0;
-			break;
-		default:
-			JsonDiscret[n][m][k++] = Json[i];
-		}
-		i++;
-	}
-	return strchr(JsonDiscret[N][M], ':') + 1;
 }
