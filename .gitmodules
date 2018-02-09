@@ -1,0 +1,3 @@
+[submodule "libtg"]
+	path = libtg
+	url = git://github.com/SOUx4cx4fx56x69/pure_c_tg_lib.git
