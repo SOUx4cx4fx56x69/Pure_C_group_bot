@@ -10,77 +10,100 @@
 #include <unistd.h>
 #include <stdbool.h>
 
+#include"libtg/tg.h"
+
+#define CHATIDS 8
+#define TEXTLS 5
+
 // Преднастройки
-const int WH_PORT       = 8443;
-const char BOT_TOKEN[]  = "";
+static int WH_PORT = 8443;
+static char * BOT_TOKEN;
 
 SSL_CTX* InitializeSSL(char*);
 int InitializeSocket(int);
 void SendMessage(const char[], const char[]);
 
-int main(void){
+int main(int argcount, char ** arguments){
+#define CLOSEPROCESS SSL_clear(ssl); SSL_free(ssl); close(client);
+
+    if(argcount < 2){
+        return fprintf(stderr, "Example: %s token (port)\n", arguments[0]);
+    }
+    BOT_TOKEN=malloc(strlen(arguments[1]));
+    strcpy(BOT_TOKEN , arguments[1]);
+    WH_PORT = argcount < 3 ? 8443 : atoi(arguments[2]);
     SSL_CTX* sslctx = InitializeSSL("cert.pem");
+    
     int sd = InitializeSocket(WH_PORT);
     listen(sd, 5);
     int client;
     int int_main_ssl_accept;
-    SSL* ssl = SSL_new(sslctx);
-
+   
+    tg_init(BOT_TOKEN);
     while (true){
+        
+        SSL* ssl = SSL_new(sslctx);
         client = accept(sd, NULL, NULL);
         SSL_set_fd(ssl, client);
         int int_main_ssl_accept = SSL_accept(ssl);
-        if (int_main_ssl_accept <= 0){
-            SSL_clear(ssl);
-            close(client);
-            continue;
+        
+        if (int_main_ssl_accept <= 0  ){ // -1 and parent
+                CLOSEPROCESS;
+                continue;
         }
-        if (fork()) {
-            SSL_clear(ssl);
-            close(client);
-            continue;
-        }
-        // start fork
+	if( fork() ){
+		continue;
+	}
+
+        // fork was started
         // объявление доп переменных потомку
         char head[1500] = {0};
         char json[1500] = {0};
-        int i = 0;
+        
         int err;
 
         // подготовка шаблонов
         char response_200[] = "HTTP/1.1 200 OK\r\nConnection: close\r\n\r\n";
 
-        i = SSL_read(ssl, head, 1500);
-        if (i <= 0){
-            SSL_clear(ssl);
-            SSL_free(ssl);
-            close(client);
-            exit(0);
+        SSL_read(ssl, head, 1500);
+        if ( SSL_read(ssl, head, 1500) <= 0
+	||
+	SSL_read(ssl, json, 1500) <= 0 ){
+            CLOSEPROCESS;
+            exit(-1);
         }
-        i = SSL_read(ssl, json, 1500);
-        if (i <= 0){
-            SSL_clear(ssl);
-            SSL_free(ssl);
-            close(client);
-            exit(0);
-        }
-        SSL_write(ssl, response_200, (int)strlen(response_200));
-        SSL_clear(ssl);
-        SSL_free(ssl);
-        close(client);
 
-        char* message = strstr(json, ",\"text\":");
-        if (message == NULL) exit(0);
+        SSL_write(ssl, response_200, (int)strlen(response_200));
+        CLOSEPROCESS;
+
+        // 
+        
+        char* message = strstr(json, ",\"text\":"); //
+        if (message == NULL) exit(-1);
         message += 9;
         message[strlen(message) - 3] = 0;
 
         char* chat_id = strstr(json, "\"},\"chat\":{\"id\":");
         if (chat_id == NULL) exit(0);
         chat_id += 16;
-        i = 0; while(chat_id[i] != ',') i++; chat_id[i] = 0;
+        unsigned int i;
+        for(i = 0; chat_id[i] != ',' && chat_id[i];i++);
+        chat_id[i] = 0;
         message[4] = 0;
-        if (!strcmp(message, "@bot"))
-            SendMessage(chat_id, message+5);
+        if (!strcmp(message, "@bot")) {//
+       //     SendMessage(chat_id, message+5);
+            
+            size_t chat_id_size = strlen(chat_id), message_size = strlen(message);
+            char tmp_chat_id_form[chat_id_size + CHATIDS];
+            char tmp_chat_message[message_size + TEXTLS];
+
+            memcpy(tmp_chat_id_form, "chat_id=", CHATIDS );
+            memcpy(tmp_chat_id_form+CHATIDS, chat_id, chat_id_size);
+            
+            memcpy(tmp_chat_id_form, "chat_id=", TEXTLS );
+            memcpy(tmp_chat_id_form+TEXTLS, chat_id, message_size);
+            tg_request("sendMessage", tmp_chat_id_form , tmp_chat_message, 0);
+        }
         exit(0);
     	// end fork
     }
@@ -111,8 +134,10 @@ int InitializeSocket(int port) {
     }
     return sd;
 }
-
+/*
 void SendMessage(const char chat_id[], const char msg[]) {
+    
+    
     // локальные переменные
     int port = 443;
     // подготовка шаблонов
@@ -161,3 +186,4 @@ void SendMessage(const char chat_id[], const char msg[]) {
     SSL_CTX_free(sslctx);
     close(sd);
 }
+*/
