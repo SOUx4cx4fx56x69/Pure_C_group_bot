@@ -47,14 +47,10 @@ int main(int argcount, char ** arguments){
         SSL_set_fd(ssl, client);
         int int_main_ssl_accept = SSL_accept(ssl);
         
-        if (int_main_ssl_accept <= 0  ){ // -1 and parent
+        if (int_main_ssl_accept <= 0 || fork()  ){ // -1 and parent
                 CLOSEPROCESS;
                 continue;
         }
-	if( fork() ){
-		continue;
-	}
-
         // fork was started
         // объявление доп переменных потомку
         char head[1500] = {0};
